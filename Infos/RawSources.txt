@@ -1,0 +1,6 @@
+iron ore
+wood
+copper ore
+oil
+stone
+water

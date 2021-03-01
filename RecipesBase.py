@@ -121,7 +121,7 @@ def ParseRecipes(line):
     requirements = list()
 
     val = words[-3:]
-    print(val)
+    # print(val)
 
     perMinute = False
 
@@ -129,7 +129,7 @@ def ParseRecipes(line):
         count = int([x for x in val if x.isnumeric()][0])
         perMinute = [True, count]
         del words[-3:]
-        print(count)
+        # print(count)
     else:
         perMinute = [False, 60]
 
@@ -188,6 +188,7 @@ class Base:
     _recipes = []
     _factories = []
     _components = []
+    _rawSources = []
 
     def __init__(self):
         pass
@@ -226,19 +227,74 @@ class Base:
 
         return recipe
 
+    def CreateRawSourcesBase(self, filename):
+        with open(filename) as reader:
+            while True:
+                line = reader.readline()
+
+                line = line[:-1]
+
+                if (line == '') | (line == "stop\n"):
+                    print("break")
+                    break
+
+                self._rawSources.append(line)
+
+    def PrintAllKnownSources(self):
+        print("Known raw sources: ")
+        for source in self._rawSources:
+            print(source, end=", ")
+        print()
+
     def PrintAllRecipes(self):
         print("Contains ", self.RecipesCount(), " recipes:")
         for recipe in self._recipes:
             PrintRecipe(recipe)
 
     def _GetRecipe(self, item):
-        # print(item)
         recipe = list(filter(lambda x: item == x.product[0][0], self._recipes))
-        # recipe = [recipe for recipe in self._recipes if item in recipe.product[:]]
         if len(recipe) != 0:
             recipe = recipe[0]
-        # print(recipe)
-        # print(len(recipe[0].product[0]), recipe[0].product[0[0]])
+
+        return recipe
+
+    productionSummary = {}
+
+    def __CalculateSybrecipe(self, item, count):
+        recipe = self._GetRecipe(item)
+
+        requiredEfficiency = count / recipe.frequency
+
+        if recipe.product[0][0] in self.productionSummary:
+            temp = self.productionSummary[recipe.product[0][0]]
+            self.productionSummary[recipe.product[0][0]] = [temp[0] + count, temp[1] + requiredEfficiency]
+        else:
+            self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency]
+
+        for component in recipe.components:
+            if not component in self._rawSources:
+                self.__CalculateSybrecipe(component[0], component[1])
 
     def CalculateRequest(self, item, count):
+        self.productionSummary = {}
+
         recipe = self._GetRecipe(item)
+
+        requiredEfficiency = count / recipe.frequency
+
+        self.__CalculateSybrecipe(item, count)
+
+        # print(recipe.product[0][0])
+
+        # if recipe.product[0][0] in self.productionSummary:
+        #     temp = self.productionSummary[recipe.product[0][0]]
+        #     self.productionSummary[recipe.product[0][0]] = [temp[0] + count, temp[1] + requiredEfficiency]
+        # else:
+        #     self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency]
+        #
+        # print(recipe.component)
+        #
+        # for component in recipe.components:
+        #     self.__CalculateSybrecipe(component[0], component[1])
+
+        return self.productionSummary

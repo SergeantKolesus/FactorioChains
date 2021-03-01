@@ -8,52 +8,30 @@ def MainMain():
     with open("Infos/Recipes.txt") as reader:
         base = rb.Base()
 
-
-        # rb.AlternativeParse("test line")
-
         while True:
-            recipe = fc.Recipe()
             line = reader.readline()
-            # line.rstrip('\n')
-            # print(int(line[-1]))
-            # print(line[-1].isprintable())
 
             if (line == '') | (line == "stop\n"):
                 print("break")
                 break
 
             rec = base.CreateRecipe(line)
-            # if '\n' in line:
-            #     print(line, end="")
-            # else:
-            #     print(line)
-            # rb.PrintRecipe(rec)
-            # print()
 
-        # print(base.RecipesCount())
     base.PrintAllRecipes()
 
-    base.CalculateRequest("iron plate", 10)
+    base.CreateRawSourcesBase("Infos/RawSources.txt")
+
+    base.PrintAllKnownSources()
+
+    # print(base.CalculateRequest("microcircuit", 10))
 
     # controlApp = cgui.CreateApp(base)
     # controlApp.go()
 
 def TestMain():
-    with open("Infos/Recipes.txt") as reader:
-        base = rb.Base()
+    graph = {}
 
-        # rb.AlternativeParse("test line")
+    pass
 
-        while True:
-            line = reader.readline()
-
-            if (line == '') | (line == "stop\n"):
-                print("break")
-                break
-
-            rec = base.CreateRecipe(line)
-
-    base.PrintAllRecipes()
-
-TestMain()
-# MainMain()
+# TestMain()
+MainMain()
