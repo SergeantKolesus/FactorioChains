@@ -186,9 +186,9 @@ def ParseRecipes(line):
 
 class Base:
     _recipes = []
-    _factories = []
     _components = []
     _rawSources = []
+    _factories = []
 
     def __init__(self):
         pass
@@ -246,6 +246,65 @@ class Base:
             print(source, end=", ")
         print()
 
+    def __ParseFactoryLine(self, line):
+        words = line.split()
+        length = len(words)
+        specials = ["consumes", "efficiency"]
+        phrase = ""
+        consumption = []
+        efficiency = 1
+        value = 1
+
+        while length > 0:
+            length -= 1
+            val = words.pop()
+
+            print(val)
+
+            try:
+                value = float(val)
+                print(value)
+                continue
+            except ValueError:
+                pass
+
+            if val in specials:
+                if val == "consumes":
+                    if phrase[-1] == ' ':
+                        phrase = phrase[:-1]
+                    consumption = [phrase, value]
+                    phrase = ""
+
+                if val == "efficiency":
+                    efficiency = value
+            else:
+                phrase = val + " " + phrase
+
+        # print(phrase)
+
+        if phrase[-1] == ' ':
+            phrase = phrase[:-1]
+
+        return [phrase, consumption, efficiency]
+
+    def CreateFactoriesBase(self, filename):
+        with open(filename) as reader:
+            while True:
+                line = reader.readline()
+
+                line = line[:-1]
+
+                if (line == '') | (line == "stop\n"):
+                    print("break")
+                    break
+
+                self._factories.append(self.__ParseFactoryLine(line))
+
+    def PrintAllFactories(self):
+        print("Usable factories are: ")
+        for factory in self._factories:
+            print(factory)
+
     def PrintAllRecipes(self):
         print("Contains ", self.RecipesCount(), " recipes:")
         for recipe in self._recipes:
@@ -263,6 +322,11 @@ class Base:
     def __CalculateSybrecipe(self, item, count):
         recipe = self._GetRecipe(item)
 
+        if recipe == []:
+            return
+
+        print(recipe)
+
         requiredEfficiency = count / recipe.frequency
 
         if recipe.product[0][0] in self.productionSummary:
@@ -271,9 +335,10 @@ class Base:
         else:
             self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency]
 
-        for component in recipe.components:
-            if not component in self._rawSources:
-                self.__CalculateSybrecipe(component[0], component[1])
+        for component in recipe.component:
+            print(component)
+            if not (component in self._rawSources):
+                self.__CalculateSybrecipe(component[0], component[1] * count)
 
     def CalculateRequest(self, item, count):
         self.productionSummary = {}

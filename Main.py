@@ -23,15 +23,17 @@ def MainMain():
 
     base.PrintAllKnownSources()
 
-    # print(base.CalculateRequest("microcircuit", 10))
+    print(base.CalculateRequest("microcircuit", 30))
 
     # controlApp = cgui.CreateApp(base)
     # controlApp.go()
 
 def TestMain():
-    graph = {}
+    base = rb.Base()
+    base.CreateFactoriesBase("Infos/Factories.txt")
+    base.PrintAllFactories()
 
     pass
 
-# TestMain()
-MainMain()
+TestMain()
+# MainMain()

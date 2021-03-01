@@ -1,4 +1,4 @@
 iron plate recipe: 1 iron plate from 1 iron ore requires furnace 60 per minute
-copper plate recipe: 1 copper plate from 1 copper ore requires furnace per minute 60
-copper wire recipe: 3 copper wire from 1 copper plate per minute 90
-microcircuit recipe: microcircuit from 2 iron plates and 5 copper wires per minute 30
+copper plate recipe: 1 copper plate from 1 copper ore requires furnace 60 per minute
+copper wire recipe: 3 copper wire from 1 copper plate 90 per minute
+microcircuit recipe: microcircuit from 2 iron plate and 5 copper wire 30 per minute
