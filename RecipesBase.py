@@ -258,11 +258,14 @@ class Base:
             while True:
                 line = reader.readline()
 
-                line = line[:-1]
-
                 if (line == '') | (line == "stop\n"):
                     print("break")
                     break
+
+                if line[0] == '#':
+                    continue
+
+                line = line[:-1]
 
                 self._rawSources.append(line)
 
@@ -336,7 +339,7 @@ class Base:
 
                     phraseBlock.append([phrase, value])
                     phrase = ""
-                    print(phraseBlock)
+                    # print(phraseBlock)
 
             else:
                 phrase = val + " " + phrase
@@ -371,6 +374,9 @@ class Base:
                     print("break")
                     break
 
+                if line[0] == '#':
+                    continue
+
                 line = line[:-1]
 
                 self._factories.append(self.__ParseFactoryLine(line))
@@ -385,7 +391,7 @@ class Base:
         for recipe in self._recipes:
             PrintRecipe(recipe)
 
-    def _GetRecipe(self, item):
+    def GetRecipe(self, item):
         recipe = list(filter(lambda x: item == x.product[0][0], self._recipes))
         if len(recipe) != 0:
             recipe = recipe[0]
@@ -395,7 +401,7 @@ class Base:
     productionSummary = {}
 
     def __CalculateSybrecipe(self, item, count):
-        recipe = self._GetRecipe(item)
+        recipe = self.GetRecipe(item)
 
         if recipe == []:
             return
@@ -418,7 +424,7 @@ class Base:
     def CalculateRequest(self, item, count):
         self.productionSummary = {}
 
-        recipe = self._GetRecipe(item)
+        recipe = self.GetRecipe(item)
 
         requiredEfficiency = count / recipe.frequency
 
