@@ -206,6 +206,14 @@ class Base:
         if not component in self._components:
             self._components.append(component)
 
+    def GetAllFactories(self):
+        res = []
+
+        for factory in self._factories:
+            res.append(factory[0])
+
+        return res
+
     def CreateRecipe(self, description):
         name, products, components, requirements, perMinute = ParseRecipes(description)
 
@@ -249,11 +257,13 @@ class Base:
     def __ParseFactoryLine(self, line):
         words = line.split()
         length = len(words)
-        specials = ["consumes", "efficiency"]
+        specials = ["consumes", "efficiency", "allow"]
         phrase = ""
+        allowance = []
         consumption = []
         efficiency = 1
         value = 1
+        valSet = False
 
         while length > 0:
             length -= 1
@@ -263,7 +273,8 @@ class Base:
 
             try:
                 value = float(val)
-                print(value)
+                valSet = True
+                # print(value)
                 continue
             except ValueError:
                 pass
@@ -274,9 +285,13 @@ class Base:
                         phrase = phrase[:-1]
                     consumption = [phrase, value]
                     phrase = ""
+                    valSet = False
 
                 if val == "efficiency":
                     efficiency = value
+
+                if val == "allow":
+                    allowance = phrase
             else:
                 phrase = val + " " + phrase
 
@@ -285,7 +300,12 @@ class Base:
         if phrase[-1] == ' ':
             phrase = phrase[:-1]
 
-        return [phrase, consumption, efficiency]
+        if valSet:
+            if int(value) == value:
+                value = int(value)
+            phrase += " " + str(value)
+
+        return [phrase, consumption, efficiency, allowance]
 
     def CreateFactoriesBase(self, filename):
         with open(filename) as reader:
@@ -348,18 +368,5 @@ class Base:
         requiredEfficiency = count / recipe.frequency
 
         self.__CalculateSybrecipe(item, count)
-
-        # print(recipe.product[0][0])
-
-        # if recipe.product[0][0] in self.productionSummary:
-        #     temp = self.productionSummary[recipe.product[0][0]]
-        #     self.productionSummary[recipe.product[0][0]] = [temp[0] + count, temp[1] + requiredEfficiency]
-        # else:
-        #     self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency]
-        #
-        # print(recipe.component)
-        #
-        # for component in recipe.components:
-        #     self.__CalculateSybrecipe(component[0], component[1])
 
         return self.productionSummary

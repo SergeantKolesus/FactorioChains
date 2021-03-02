@@ -20,10 +20,16 @@ def MainMain():
     base.PrintAllRecipes()
 
     base.CreateRawSourcesBase("Infos/RawSources.txt")
+    base.CreateFactoriesBase("Infos/Factories.txt")
 
     base.PrintAllKnownSources()
 
     print(base.CalculateRequest("microcircuit", 30))
+    print(base.FactoriesCount())
+
+    app = cgui.RecipesApp(base)
+    app.Run()
+
 
     # controlApp = cgui.CreateApp(base)
     # controlApp.go()
@@ -35,5 +41,5 @@ def TestMain():
 
     pass
 
-TestMain()
-# MainMain()
+# TestMain()
+MainMain()
