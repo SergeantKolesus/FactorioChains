@@ -217,6 +217,21 @@ class Base:
 
         return res
 
+    def GetAllRecipes(self):
+        res = []
+
+        for recipe in self._recipes:
+            if recipe.name != "recipe":
+                res.append(recipe.name)
+            else:
+                res.append("Unnamed " + recipe.product[0])
+
+        return res
+
+    def GetSpecifiedRecipe(self, name):
+        recipe = list(filter(lambda x: x.name == name, self._recipes))
+        return recipe
+
     def CreateRecipe(self, description):
         name, products, components, requirements, perMinute = ParseRecipes(description)
 
