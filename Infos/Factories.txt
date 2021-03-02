@@ -1,4 +1,6 @@
+test machine 1 efficiency 1 consumes electricity 25 and fuel 0.5 allow crafting and liquids
+stop
 furnace consumes fuel allow smelting
 assembler machine 1 efficiency 0.5 consumes electricity 75 allow crafting
-assembler machine 2 efficiency 0.75 consumes electricity 150 allow crafting
-assembler machine 3 efficiency 1.25 consumes electricity 375 allow crafting
+assembler machine 2 efficiency 0.75 consumes electricity 150 allow crafting and liquids
+assembler machine 3 efficiency 1.25 consumes electricity 375 allow crafting and liquids

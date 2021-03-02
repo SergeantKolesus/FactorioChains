@@ -25,7 +25,7 @@ def MainMain():
     base.PrintAllKnownSources()
 
     print(base.CalculateRequest("microcircuit", 30))
-    print(base.FactoriesCount())
+    # print(base.FactoriesCount())
 
     app = cgui.RecipesApp(base)
     app.Run()
@@ -41,5 +41,5 @@ def TestMain():
 
     pass
 
-# TestMain()
-MainMain()
+TestMain()
+# MainMain()

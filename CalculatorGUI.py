@@ -44,10 +44,10 @@ class RecipesApp:
         return res
 
     def __updateRecipeInfoField(self):
-        print("Updated")
+        # print("Updated")
         recipe = self.base.GetSpecifiedRecipe(self.app.getOptionBox("Recipes"))[0]
 
-        print(self.__createdMultistringRecipeDescription(recipe))
+        # print(self.__createdMultistringRecipeDescription(recipe))
         self.app.setLabel("Recipe view label", self.__createdMultistringRecipeDescription(recipe))
         pass
 

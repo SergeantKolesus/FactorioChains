@@ -275,19 +275,20 @@ class Base:
     def __ParseFactoryLine(self, line):
         words = line.split()
         length = len(words)
-        specials = ["consumes", "efficiency", "allow"]
+        specials = ["consumes", "efficiency", "allow", "and"]
         phrase = ""
         allowance = []
         consumption = []
         efficiency = 1
         value = 1
         valSet = False
+        phraseBlock = list()
 
         while length > 0:
             length -= 1
             val = words.pop()
 
-            print(val)
+            # print(val)
 
             try:
                 value = float(val)
@@ -301,15 +302,42 @@ class Base:
                 if val == "consumes":
                     if phrase[-1] == ' ':
                         phrase = phrase[:-1]
-                    consumption = [phrase, value]
+                    if len(phraseBlock) != 0:
+                        phraseBlock.append([phrase, value])
+                        consumption = phraseBlock.copy()
+                    else:
+                        consumption = [phrase, value]
                     phrase = ""
                     valSet = False
+                    phraseBlock = list()
 
                 if val == "efficiency":
                     efficiency = value
+                    phrase = ""
+                    valSet = False
 
                 if val == "allow":
-                    allowance = phrase
+                    if phrase[-1] == ' ':
+                        phrase = phrase[:-1]
+
+                    if len(phraseBlock) != 0:
+                        phraseBlock.append(phrase)
+                        allowance = phraseBlock.copy()
+
+                        phraseBlock = list()
+                    else:
+                        allowance = phrase
+                    phrase = ""
+                    valSet = False
+
+                if val == "and":
+                    if phrase[-1] == ' ':
+                        phrase = phrase[:-1]
+
+                    phraseBlock.append([phrase, value])
+                    phrase = ""
+                    print(phraseBlock)
+
             else:
                 phrase = val + " " + phrase
 
@@ -323,6 +351,15 @@ class Base:
                 value = int(value)
             phrase += " " + str(value)
 
+        # print(allowance)
+
+        for i in range(len(allowance)):
+            # print(allowance[i], i, len(allowance[i]))
+            if not (type(allowance[i]) == str):
+                allowance.append(allowance[i][0])
+                del allowance[i]
+                i -= 1
+
         return [phrase, consumption, efficiency, allowance]
 
     def CreateFactoriesBase(self, filename):
@@ -330,11 +367,11 @@ class Base:
             while True:
                 line = reader.readline()
 
-                line = line[:-1]
-
                 if (line == '') | (line == "stop\n"):
                     print("break")
                     break
+
+                line = line[:-1]
 
                 self._factories.append(self.__ParseFactoryLine(line))
 
@@ -363,7 +400,7 @@ class Base:
         if recipe == []:
             return
 
-        print(recipe)
+        # print(recipe)
 
         requiredEfficiency = count / recipe.frequency
 
@@ -374,7 +411,7 @@ class Base:
             self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency]
 
         for component in recipe.component:
-            print(component)
+            # print(component)
             if not (component in self._rawSources):
                 self.__CalculateSybrecipe(component[0], component[1] * count)
 
