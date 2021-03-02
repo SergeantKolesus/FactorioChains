@@ -199,6 +199,9 @@ class Base:
     def RecipesCount(self):
         return len(self._recipes)
 
+    def RawSourceCount(self):
+        return len(self._rawSources)
+
     def AddRecipe(self, recipe):
         self._recipes.append(recipe)
 
