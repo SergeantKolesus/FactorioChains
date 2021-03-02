@@ -431,3 +431,15 @@ class Base:
         self.__CalculateSybrecipe(item, count)
 
         return self.productionSummary
+
+    def CalcualteMultipleRequest(self, data):
+        self.productionSummary = {}
+
+        for pair in data:
+            # print(pair)
+            recipe = self.GetRecipe(pair[0])
+            # print(recipe)
+            requiredEfficiency = pair[1] / recipe.frequency
+            self.__CalculateSybrecipe(pair[0], pair[1])
+
+        return self.productionSummary

@@ -26,10 +26,45 @@ class RecipesApp:
     def __addItemButtonOnClickSub(self, btn):
         addingItemName = self.app.getOptionBox("Add recipe ob")
         print(addingItemName)
-        # self.app.setListBoxRows("Input recipes", self.app.getListBox("Input recipes"))
+        try:
+            count = float(self.app.getEntry("Per minute production entry sub"))
+        except Exception:
+            count = 60
+
+        addingItemName = str(count) + " " + addingItemName + " per minute"
+        # self.app.setListBoxRows("Input recipes", self.  app.getListBox("Input recipes"))
         self.app.addListItem("Input recipes", addingItemName)
         self.app.hideSubWindow("Add item")
         pass
+
+    def __calculateButtonOnClick(self, btn):
+        requests = list()
+
+        for line in self.app.getListBox("Input recipes"):
+            words = line.split()
+            count = float(words[0])
+            del words[0]
+            name = ""
+            for word in words:
+                if word == "per":
+                    break
+                name += word + " "
+
+            name = name[:-1]
+            requests.append([name, count])
+
+        requirements = self.base.CalcualteMultipleRequest(requests)
+
+        for key in requirements.keys():
+            self.app.addListItem("Crafting requirements list box", str(key) + str(requirements[key]))
+
+        # print()
+
+        # self.app.updateListBox("Crafting requirements list box", requirements)
+
+        # for requrement in requirements:
+        #     self.app.addListItem("Crafting requirements list box", requrement.)
+
 
     def __createAllowedFactoriesCheckBox(self):
         factories = self.base.GetAllFactories()
@@ -41,14 +76,6 @@ class RecipesApp:
             props[factory] = True
 
         self.app.addProperties("Factories", props, 0, 1)
-
-    def __createInformationField(self):
-        # self.app.addScrolledTextArea("Info text area", 0, 0)
-        infostr = "Known recipes count: " + str(self.base.RecipesCount())
-        infostr += '\n' + "Known factories count: " + str(self.base.FactoriesCount())
-        infostr += '\n' + "Known raw sources count: " + str(self.base.RawSourceCount())
-        self.app.addLabel("info l1", infostr, 0, 0)
-        # self.app.addLabel("info l2", "Known recipes: " + str(self.base.RecipesCount() + 5), 0, 0)
 
     def __createdMultistringRecipeDescription(self, recipe):
         res = "Creates "
@@ -74,6 +101,14 @@ class RecipesApp:
 
         return res
 
+    def __createInformationField(self):
+        # self.app.addScrolledTextArea("Info text area", 0, 0)
+        infostr = "Known recipes count: " + str(self.base.RecipesCount())
+        infostr += '\n' + "Known factories count: " + str(self.base.FactoriesCount())
+        infostr += '\n' + "Known raw sources count: " + str(self.base.RawSourceCount())
+        self.app.addLabel("info l1", infostr, 0, 0)
+        # self.app.addLabel("info l2", "Known recipes: " + str(self.base.RecipesCount() + 5), 0, 0)
+
     def __createRecipeLookingField(self):
         recipes = self.base.GetAllRecipes()
 
@@ -90,20 +125,27 @@ class RecipesApp:
         self.app.addListBox("Input recipes", [], 2, 0)
         # self.app.addButton("Add craft button", "Add item", 2, 0)
         self.app.addButton("Add", self.__addItemButtonOnClick, 1, 0)
+        self.app.addButton("Calculate", self.__calculateButtonOnClick, 4, 0, 2, 1)
 
     def __createAddItemSubwindow(self):
         sub = self.app.startSubWindow("Add item", modal=True)
-        self.app.addOptionBox("Add recipe ob", self.base.GetAllRecipes(), 0, 0)
+        self.app.addOptionBox("Add recipe ob", self.base.GetAllRecipes(), 0, 0, 2, 1)
         recipe = self.base.GetRecipe(self.app.getOptionBox("Add recipe ob"))
-        self.app.addLabel("Recipe info label sub", self.__createdMultistringRecipeDescription(recipe))
+        self.app.addLabel("Recipe info label sub", self.__createdMultistringRecipeDescription(recipe), 1, 0, 2, 1)
         self.app.setOptionBoxChangeFunction("Add recipe ob", self.__updateRecipesInfoSub)
-        self.app.setSize(480, 480)
-        self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, 3, 0)
+        # self.app.setSize(480, 480)
+        self.app.addLabel("Per minute phrase label sub", "Production per minute:", 2, 0)
+        self.app.addEntry("Per minute production entry sub", 2, 1)
+        self.app.setEntry("Per minute production entry sub", "60")
+        self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, 3, 0, 2, 1)
         self.app.stopSubWindow()
+
+    def __createResultsField(self):
+        self.app.addListBox("Crafting requirements list box", [], 5, 0, 2, 1)
 
     def __init__(self, base):
         self.base = base
-        self.app = gui("Calculator", "640x480")
+        self.app = gui("Calculator", "1280x1024")
         # self.app.setSticky("news")
         # self.app.setExpand("both")
         countInfo = "Total amount of recipeces parsed " + str(base.RecipesCount())
@@ -115,6 +157,7 @@ class RecipesApp:
         self.__createRecipeLookingField()
         self.__createInputField()
         self.__createAddItemSubwindow()
+        self.__createResultsField()
 
         # self.app.addCheckBox()
 

@@ -4,3 +4,8 @@ furnace consumes fuel allow smelting
 assembler machine 1 efficiency 0.5 consumes electricity 75 allow crafting
 assembler machine 2 efficiency 0.75 consumes electricity 150 allow crafting and liquids
 assembler machine 3 efficiency 1.25 consumes electricity 375 allow crafting and liquids
+mining drill efficiency 1 consumes electricity 100 allow mining
+# add efficiency from researches
+# add check box (input fields) selection of crafting recipe
+# calculate exta output of factories
+# add availability to choose resources, that are needed to be stored in chest
