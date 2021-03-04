@@ -21,7 +21,7 @@ class RecipesApp:
         self.app.showSubWindow("Add item")
         pass
 
-    def __addItemButtonOnClickSub(self, btn):
+    def __addItemButtonOnClickSubOld(self, btn):
         addingItemName = self.app.getOptionBox("Add recipe ob")
         print(addingItemName)
         try:
@@ -34,6 +34,48 @@ class RecipesApp:
         self.app.addListItem("Input recipes", addingItemName)
         self.app.hideSubWindow("Add item")
         pass
+
+    def __addItemButtonOnClickSub(self, btn):
+        for entry in self.app.getAllEntries():
+            text = self.app.getEntry(entry)
+
+            if text == "":
+                continue
+
+            if text == "0":
+                continue
+
+            try:
+                count = float(text)
+            except:
+                count = 60
+
+            groupName = entry[:-5]
+            item = self.app.getLabel(groupName + "Label")
+            print(item)
+
+            addingItemName = str(count) + " " + item
+
+            if self.app.getCheckBox(groupName + "Check box"):
+                addingItemName += " per minute"
+
+            self.app.addListItem("Input recipes", addingItemName)
+            self.app.hideSubWindow("Add item")
+
+            # print("Not zero", text)
+
+        # addingItemName = self.app.getOptionBox("Add recipe ob")
+        # print(addingItemName)
+        # try:
+        #     count = float(self.app.getEntry("Per minute production entry sub"))
+        # except Exception:
+        #     count = 60
+        #
+        # addingItemName = str(count) + " " + addingItemName + " per minute"
+        # # self.app.setListBoxRows("Input recipes", self.  app.getListBox("Input recipes"))
+        # self.app.addListItem("Input recipes", addingItemName)
+        # self.app.hideSubWindow("Add item")
+        # pass
 
     def __calculateButtonOnClick(self, btn):
         requests = list()
@@ -55,14 +97,6 @@ class RecipesApp:
 
         for key in requirements.keys():
             self.app.addListItem("Crafting requirements list box", str(key) + str(requirements[key]))
-
-        # print()
-
-        # self.app.updateListBox("Crafting requirements list box", requirements)
-
-        # for requrement in requirements:
-        #     self.app.addListItem("Crafting requirements list box", requrement.)
-
 
     def __createAllowedFactoriesCheckBox(self):
         factories = self.base.GetAllFactories()
@@ -128,7 +162,7 @@ class RecipesApp:
     def __createResultsField(self):
         self.app.addListBox("Crafting requirements list box", [], 5, 0, 2, 1)
 
-    def __createAddItemSubwindow(self):
+    def __createAddItemSubwindowOld(self):
         sub = self.app.startSubWindow("Add item", modal=True)
         self.app.addOptionBox("Add recipe ob", self.base.GetAllRecipes(), 0, 0, 2, 1)
         recipe = self.base.GetRecipe(self.app.getOptionBox("Add recipe ob"))
@@ -162,12 +196,12 @@ class RecipesApp:
 
         return rows, columns
 
-    def __createAddItemSubwindowNew(self):
+    def __createAddItemSubwindow(self):
         sub = self.app.startSubWindow("Add item", modal=True)
         count = self.base.RecipesCount()
-        columns = 1
-        rows = 10
         components = 5
+        i = 0
+        recipes = self.base.GetAllRecipes()
 
         rows, columns = self.__getSubWindowGridData(count)
 
@@ -175,7 +209,7 @@ class RecipesApp:
             print(column, column * components)
             for row in range(rows):
                 string = "Test text" + str(column) + ":" + str(row)
-                self.app.addLabel(string + "Label", "Name", row, column * components)
+                self.app.addLabel(string + "Label", recipes[i], row, column * components)
                 self.app.addEntry(string + "Entry", row, column * components + 1)
                 self.app.setEntryDefault(string + "Entry", "0")
                 self.app.addNamedCheckBox("Per minute", string + "Check box", row, column * components + 2)
@@ -184,7 +218,9 @@ class RecipesApp:
                                  column * components + 3)
                 self.app.addOptionBox(string + "Option box 2", ["Ignore remains", "Minimize remains", "Craft remains"], row,
                                  column * components + 4)
+                i += 1
 
+        self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, rows, 0, components)
         self.app.stopSubWindow()
 
     def __init__(self, base):
