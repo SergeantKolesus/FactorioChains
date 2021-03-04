@@ -126,7 +126,14 @@ def ParseRecipes(line):
     perMinute = False
 
     if ("per" in val) and ("minute" in val):
-        count = int([x for x in val if x.isnumeric()][0])
+        try:
+            count = float(val[0])
+        except Exception:
+            try:
+                count = float(val[2])
+            except Exception:
+                count = 60
+        # count = int([x for x in val if x.isnumeric()][0])
         perMinute = [True, count]
         del words[-3:]
         # print(count)
@@ -231,6 +238,9 @@ class Base:
     def GetSpecifiedRecipe(self, name):
         recipe = list(filter(lambda x: x.name == name, self._recipes))
         return recipe
+
+    def GetSpecifiedFactory(self, name):
+        return list(filter(lambda x: x.name == name, self._factories))
 
     def CreateRecipe(self, description):
         name, products, components, requirements, perMinute = ParseRecipes(description)
@@ -425,6 +435,10 @@ class Base:
         self.productionSummary = {}
 
         recipe = self.GetRecipe(item)
+        print(recipe)
+
+        if recipe != []:
+            return 0
 
         requiredEfficiency = count / recipe.frequency
 

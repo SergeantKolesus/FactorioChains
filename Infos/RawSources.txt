@@ -1,6 +1,6 @@
 iron ore
 wood
 copper ore
-oil
+crude oil
 stone
 water

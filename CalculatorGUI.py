@@ -3,8 +3,6 @@ from appJar import gui
 class RecipesApp:
     base = []
 
-
-
     def __updateRecipesInfoMain(self):
         self.__updateRecipeInfoField("Recipes", "Recipe view label")
 
@@ -127,6 +125,9 @@ class RecipesApp:
         self.app.addButton("Add", self.__addItemButtonOnClick, 1, 0)
         self.app.addButton("Calculate", self.__calculateButtonOnClick, 4, 0, 2, 1)
 
+    def __createResultsField(self):
+        self.app.addListBox("Crafting requirements list box", [], 5, 0, 2, 1)
+
     def __createAddItemSubwindow(self):
         sub = self.app.startSubWindow("Add item", modal=True)
         self.app.addOptionBox("Add recipe ob", self.base.GetAllRecipes(), 0, 0, 2, 1)
@@ -140,8 +141,51 @@ class RecipesApp:
         self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, 3, 0, 2, 1)
         self.app.stopSubWindow()
 
-    def __createResultsField(self):
-        self.app.addListBox("Crafting requirements list box", [], 5, 0, 2, 1)
+    def __getSubWindowGridData(self, count):
+        rows = 0
+        columns = 0
+        maxColumn = 30
+
+        if count <= maxColumn:
+            rows = count
+            columns = 1
+        else:
+            columns = int(count) / maxColumn
+
+            if (count % maxColumn) != 0:
+                columns += 1
+
+            rows = count / columns
+
+            if (count % columns) != 0:
+                rows += 1
+
+        return rows, columns
+
+    def __createAddItemSubwindowNew(self):
+        sub = self.app.startSubWindow("Add item", modal=True)
+        count = self.base.RecipesCount()
+        columns = 1
+        rows = 10
+        components = 5
+
+        rows, columns = self.__getSubWindowGridData(count)
+
+        for column in range(columns):
+            print(column, column * components)
+            for row in range(rows):
+                string = "Test text" + str(column) + ":" + str(row)
+                self.app.addLabel(string + "Label", "Name", row, column * components)
+                self.app.addEntry(string + "Entry", row, column * components + 1)
+                self.app.setEntryDefault(string + "Entry", "0")
+                self.app.addNamedCheckBox("Per minute", string + "Check box", row, column * components + 2)
+                self.app.setCheckBox(string + "Check box", True)
+                self.app.addOptionBox(string + "Option box", ["No acceleration", "Allow acceleration"], row,
+                                 column * components + 3)
+                self.app.addOptionBox(string + "Option box 2", ["Ignore remains", "Minimize remains", "Craft remains"], row,
+                                 column * components + 4)
+
+        self.app.stopSubWindow()
 
     def __init__(self, base):
         self.base = base
