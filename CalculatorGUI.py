@@ -62,21 +62,6 @@ class RecipesApp:
             self.app.addListItem("Input recipes", addingItemName)
             self.app.hideSubWindow("Add item")
 
-            # print("Not zero", text)
-
-        # addingItemName = self.app.getOptionBox("Add recipe ob")
-        # print(addingItemName)
-        # try:
-        #     count = float(self.app.getEntry("Per minute production entry sub"))
-        # except Exception:
-        #     count = 60
-        #
-        # addingItemName = str(count) + " " + addingItemName + " per minute"
-        # # self.app.setListBoxRows("Input recipes", self.  app.getListBox("Input recipes"))
-        # self.app.addListItem("Input recipes", addingItemName)
-        # self.app.hideSubWindow("Add item")
-        # pass
-
     def __calculateButtonOnClick(self, btn):
         requests = list()
 
@@ -184,16 +169,17 @@ class RecipesApp:
             rows = count
             columns = 1
         else:
-            columns = int(count) / maxColumn
+            columns = int(count / maxColumn)
 
             if (count % maxColumn) != 0:
                 columns += 1
 
-            rows = count / columns
+            rows = int(count / columns)
 
             if (count % columns) != 0:
                 rows += 1
 
+        print(columns, rows)
         return rows, columns
 
     def __createAddItemSubwindow(self):
@@ -208,6 +194,9 @@ class RecipesApp:
         for column in range(columns):
             print(column, column * components)
             for row in range(rows):
+                if i == count:
+                    break
+
                 string = "Test text" + str(column) + ":" + str(row)
                 self.app.addLabel(string + "Label", recipes[i], row, column * components)
                 self.app.addEntry(string + "Entry", row, column * components + 1)
@@ -220,7 +209,7 @@ class RecipesApp:
                                  column * components + 4)
                 i += 1
 
-        self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, rows, 0, components)
+        self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, rows, 0, components * columns)
         self.app.stopSubWindow()
 
     def __init__(self, base):
