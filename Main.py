@@ -8,15 +8,17 @@ def MainMain():
     base = rb.Base()
 
     base.CreateRecipesBase("Infos/Recipes.txt")
-
-    # base.PrintAllRecipes()
-
     base.CreateRawSourcesBase("Infos/RawSources.txt")
     base.CreateFactoriesBase("Infos/Factories.txt")
 
+    # base.PrintAllRecipes()
+
+
+
     # base.PrintAllKnownSources()
 
-    print(base.CalculateRequest("processing unit", 30))
+    # print(base.CalculateMultipleRequest("processing unit"))
+
     # print(base.FactoriesCount())
 
     app = cgui.RecipesApp(base)
@@ -29,6 +31,7 @@ def MainMain():
 def TestMain():
     base = rb.Base()
     base.CreateRecipesBase("Infos/Recipes.txt")
+    print(base.GetRecipesByProduct("petroleum gas"))
     # print(base.GetRecipeByName("advanced oil processing"))
     # base.CreateFactoriesBase("Infos/Factories.txt")
     # base.PrintAllFactories()

@@ -78,7 +78,7 @@ class RecipesApp:
             name = name[:-1]
             requests.append([name, count])
 
-        requirements = self.base.CalcualteMultipleRequest(requests)
+        requirements = self.base.CalculateMultipleRequest(requests)
 
         print(requirements)
 

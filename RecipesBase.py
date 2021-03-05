@@ -1,5 +1,5 @@
 import FactorioChains as fc
-
+import math
 def FirstIndexOf(array, element):
     i = 0
 
@@ -437,17 +437,41 @@ class Base:
         # if len(recipe) != 0:
         #     recipe = recipe[0]
 
-        return list(filter(lambda x: product in x.product[0], self._recipes))
+        recipes = list()
+
+        for recipe in self._recipes:
+            # print(recipe.product[:])
+            t = list(filter(lambda x:  product == x[0], recipe.product))
+            if t != []:
+                recipes.append(recipe)
+
+        if recipes == []:
+            return recipes
+
+        print(recipes)
+
+        return recipes[0]
+        # return list(filter(lambda x: product for product in x.product if product in product, self._recipes))
 
     productionSummary = {}
 
     def __CalculateSybrecipe(self, item, count):
-        recipe = self.GetRecipeByName(item)
+        print("Item: ", item)
 
-        if recipe == []:
+        if item in self._rawSources:
             return
 
-        # print(recipe)
+        recipe = self.GetRecipesByProduct(item)
+
+        if recipe == []:
+            print("Recipe not found")
+            return
+
+        print(recipe)
+
+        # recipe = recipe[0]
+
+        print("Recipe: ", recipe)
 
         requiredEfficiency = count / recipe.frequency
 
@@ -459,8 +483,32 @@ class Base:
 
         for component in recipe.component:
             # print(component)
-            if not (component in self._rawSources):
-                self.__CalculateSybrecipe(component[0], component[1] * count)
+            print("Component: ", component)
+            if not (component[0] in self._rawSources):
+                self.__CalculateSybrecipe(component[0], component[1] * requiredEfficiency)
+
+    def __getProperFactories(self, request):
+        # print("Require: ")
+        #
+        # for requirement in request[2]:
+        #     print(requirement)
+        # for factory in self._factories:
+        #     print(factory)
+
+        #
+        # if request[2] == []:
+        #     print("Crafting")
+
+        matchingfactories = self._factories.copy()
+
+        for reqirement in request[2]:
+            # print("Req: ", reqirement)
+            matchingfactories = list(filter(lambda x: reqirement[0] in x[3], matchingfactories))
+            # print("Tmatch: ", matchingfactories)
+
+        # print("match: ", matchingfactories)
+
+        return matchingfactories
 
     def CalculateRequest(self, item, count):
         self.productionSummary = {}
@@ -477,14 +525,43 @@ class Base:
 
         return self.productionSummary
 
-    def CalcualteMultipleRequest(self, data):
+    def CalculateMultipleRequest(self, data):
         self.productionSummary = {}
 
+        print("Data: ", data)
+
         for pair in data:
-            print(pair)
+            print("pair:", pair)
             recipe = self.GetRecipeByName(pair[0])
             print(recipe)
             requiredEfficiency = pair[1] / recipe.frequency
             self.__CalculateSybrecipe(pair[0], pair[1])
+
+        for propkey in self.productionSummary.keys():
+            prop = self.productionSummary[propkey]
+            factories = self.__getProperFactories(prop)
+
+            if(factories == []):
+                print("Error: no factory found")
+                continue
+
+            efficiency = -1
+            selectedFactory = []
+
+            for factory in factories:
+                if factory[2] > efficiency:
+                    efficiency = factory[2]
+                    selectedFactory = factory
+
+            # print(selectedFactory)
+
+            factoriesCount = math.ceil(prop[1] / selectedFactory[2])
+            self.productionSummary[propkey] = [selectedFactory[0], factoriesCount]
+
+            # key = self.productionSummary.
+
+            # print(factory[0], ": ", factoriesCount, ": ", data[0])
+
+        print(self.productionSummary)
 
         return self.productionSummary
