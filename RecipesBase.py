@@ -279,6 +279,19 @@ class Base:
 
                 self._rawSources.append(line)
 
+    def CreateRecipesBase(self, filename):
+        with open(filename) as reader:
+
+            while True:
+                line = reader.readline()
+
+                if (line == '') | (line == "stop\n"):
+                    print("break")
+                    break
+
+                if line[0] != '#':
+                    rec = self.CreateRecipe(line)
+
     def PrintAllKnownSources(self):
         print("Known raw sources: ")
         for source in self._rawSources:
@@ -401,17 +414,35 @@ class Base:
         for recipe in self._recipes:
             PrintRecipe(recipe)
 
-    def GetRecipe(self, item):
-        recipe = list(filter(lambda x: item == x.product[0][0], self._recipes))
+    def GetRecipeByName(self, name):
+        # for recipe in self._recipes:
+        #     print(recipe.name)
+
+        recipe = list(filter(lambda x: name == x.name, self._recipes))
+        # print(recipe)
         if len(recipe) != 0:
             recipe = recipe[0]
 
         return recipe
 
+    def GetFirstRecipeByProduct(self, product):
+        recipe = list(filter(lambda x: product in x.product[0], self._recipes))
+        if len(recipe) != 0:
+            recipe = recipe[0]
+
+        return recipe
+
+    def GetRecipesByProduct(self, product):
+        # recipe = list(filter(lambda x: product in x.product[0], self._recipes))
+        # if len(recipe) != 0:
+        #     recipe = recipe[0]
+
+        return list(filter(lambda x: product in x.product[0], self._recipes))
+
     productionSummary = {}
 
     def __CalculateSybrecipe(self, item, count):
-        recipe = self.GetRecipe(item)
+        recipe = self.GetRecipeByName(item)
 
         if recipe == []:
             return
@@ -422,9 +453,9 @@ class Base:
 
         if recipe.product[0][0] in self.productionSummary:
             temp = self.productionSummary[recipe.product[0][0]]
-            self.productionSummary[recipe.product[0][0]] = [temp[0] + count, temp[1] + requiredEfficiency]
+            self.productionSummary[recipe.product[0][0]] = [temp[0] + count, temp[1] + requiredEfficiency, recipe.requirements]
         else:
-            self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency]
+            self.productionSummary[recipe.product[0][0]] = [count, requiredEfficiency, recipe.requirements, recipe.component, recipe.product]
 
         for component in recipe.component:
             # print(component)
@@ -434,7 +465,7 @@ class Base:
     def CalculateRequest(self, item, count):
         self.productionSummary = {}
 
-        recipe = self.GetRecipe(item)
+        recipe = self.GetRecipeByName(item)
         print(recipe)
 
         if recipe != []:
@@ -450,9 +481,9 @@ class Base:
         self.productionSummary = {}
 
         for pair in data:
-            # print(pair)
-            recipe = self.GetRecipe(pair[0])
-            # print(recipe)
+            print(pair)
+            recipe = self.GetRecipeByName(pair[0])
+            print(recipe)
             requiredEfficiency = pair[1] / recipe.frequency
             self.__CalculateSybrecipe(pair[0], pair[1])
 

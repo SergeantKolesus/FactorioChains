@@ -80,6 +80,8 @@ class RecipesApp:
 
         requirements = self.base.CalcualteMultipleRequest(requests)
 
+        print(requirements)
+
         for key in requirements.keys():
             self.app.addListItem("Crafting requirements list box", str(key) + str(requirements[key]))
 
@@ -98,12 +100,15 @@ class RecipesApp:
         res = "Creates "
 
         for product in recipe.product:
-            res += str(product[1]) + " " + product[0] + " "
+            res += str(product[1]) + " " + product[0] + " and "
 
+        res = res[:-4]
         res += "\nfrom "
 
         for component in recipe.component:
-            res += str(component[1]) + " " + component[0] + " "
+            res += str(component[1]) + " " + component[0] + " and "
+
+        res = res[:-4]
 
         if len(recipe.requirements) == 0:
             res += "\nand has no special requirements"
@@ -114,7 +119,7 @@ class RecipesApp:
                 res += requirement[0] + " "
 
         if recipe.perMinute:
-            res += "\nwith frequency " + str(recipe.frequency) + " item per minute"
+            res += "\nwith frequency " + str(recipe.frequency) + " operations per minute"
 
         return res
 
@@ -132,7 +137,7 @@ class RecipesApp:
         self.app.addLabelOptionBox("Recipes", recipes, 1, 1)
         self.app.addLabel("Recipe view label", "", 2, 1)
 
-        recipe = self.base.GetRecipe(self.app.getOptionBox("Recipes"))
+        recipe = self.base.GetRecipeByName(self.app.getOptionBox("Recipes"))
         self.app.setLabel("Recipe view label", self.__createdMultistringRecipeDescription(recipe))
 
         self.app.setOptionBoxChangeFunction("Recipes", self.__updateRecipesInfoMain)
@@ -160,7 +165,7 @@ class RecipesApp:
         self.app.addNamedButton("Add", "Add item sub button", self.__addItemButtonOnClickSub, 3, 0, 2, 1)
         self.app.stopSubWindow()
 
-    def __getSubWindowGridData(self, count):
+    def __calculateSubwindowGridSize(self, count):
         rows = 0
         columns = 0
         maxColumn = 30
@@ -189,7 +194,7 @@ class RecipesApp:
         i = 0
         recipes = self.base.GetAllRecipes()
 
-        rows, columns = self.__getSubWindowGridData(count)
+        rows, columns = self.__calculateSubwindowGridSize(count)
 
         for column in range(columns):
             print(column, column * components)
@@ -215,12 +220,8 @@ class RecipesApp:
     def __init__(self, base):
         self.base = base
         self.app = gui("Calculator", "1280x1024")
-        # self.app.setSticky("news")
-        # self.app.setExpand("both")
         countInfo = "Total amount of recipeces parsed " + str(base.RecipesCount())
         self.app.addLabel("l1", countInfo)
-        # self.app.addLabelOptionBox("Recipes", [], 1, 1)
-        # self.app.addLabel("Selected recipe lbl", "", 1, 1)
         self.__createAllowedFactoriesCheckBox()
         self.__createInformationField()
         self.__createRecipeLookingField()
