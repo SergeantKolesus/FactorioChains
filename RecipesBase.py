@@ -1,194 +1,481 @@
 import FactorioChains as fc
 import math
-def FirstIndexOf(array, element):
-    i = 0
+# def FirstIndexOf(array, element):
+#     i = 0
+#
+#     for val in array:
+#         if val == element:
+#             return i
+#         i += 1
+#
+#     return -1
+#
+#
+# def DivideEnumeration(words):
+#     res = list()
+#     # print("In divide ", words)
+#
+#     while "and" in words:
+#         block = words[:FirstIndexOf(words, "and")]
+#         del words[:len(block) + 1]
+#         if block[0].isnumeric():
+#             compCount = int(block[0])
+#             del block[0]
+#         else:
+#             compCount = 1
+#
+#         block = " ".join(block)
+#
+#         res.append([block, compCount])
+#
+#     if words[0].isnumeric():
+#         compCount = int(words[0])
+#         del words[0]
+#     else:
+#         compCount = 1
+#
+#     words = " ".join(words[:])
+#
+#     res.append([words, compCount])
+#
+#     return res
+#
+# def DivideEnumerationCountless(words):
+#     res = []
+#
+#     if len(words) == 0:
+#         return res
+#
+#     while "and" in words:
+#         block = words[:FirstIndexOf(words, "and")]
+#         del words[:len(block) + 1]
+#
+#         block = " ".join(block[:])
+#         res.append(block)
+#
+#     words = " ".join(words[:])
+#     res.append(words)
+#
+#     return res
+#
+# def ParseRecipe(string):
+#     words = string.split()
+#
+#     if "per minute" in string:
+#         # print("Per minute detected")
+#         perMinuteCount = int(words[-1])
+#         del words[-1]
+#         del words[-1]
+#         del words[-1]
+#         perMinute = [True, perMinuteCount]
+#     else:
+#         perMinute = [False, 60]
+#
+#     if "recipe:" in words:
+#         name = words[:FirstIndexOf(words, "recipe:")]
+#         # if len(name) > 1:
+#         # print(words)
+#         del words[:len(name) + 1]
+#         name = " ".join(name)
+#     else:
+#         name = "unnamed"
+#
+#     lastProduct = FirstIndexOf(words, "from")
+#     products = DivideEnumeration(words[:lastProduct])
+#     del words[:lastProduct + 1]
+#     if "requires" in words:
+#         lastComponent = FirstIndexOf(words, "requires")
+#     else:
+#         lastComponent = len(words)
+#
+#     components = words[:lastComponent].copy()
+#     del words[:len(components)]
+#
+#     components = DivideEnumeration(components)
+#
+#     if len(words) != 0:
+#         del words[0]
+#
+#     requirements = DivideEnumerationCountless(words)
+#
+#     return name, products, components, requirements, perMinute
+#
+#
+# def PrintRecipe(recipe):
+#     print(recipe)
+#
+#
+# def IsSpecific(word):
+#     specific = "and", "from", "recipe:", "requires"
+#     return word in specific
+#
+#
+# def ParseRecipes(line):
+#     words = line.split()
+#     stack = []
+#     length = len(words)
+#     perMinute = []
+#     name = "recipe"
+#     components = list()
+#     products = list()
+#     requirements = list()
+#
+#     val = words[-3:]
+#     # print(val)
+#
+#     perMinute = False
+#
+#     if ("per" in val) and ("minute" in val):
+#         try:
+#             count = float(val[0])
+#         except Exception:
+#             try:
+#                 count = float(val[2])
+#             except Exception:
+#                 count = 60
+#         # count = int([x for x in val if x.isnumeric()][0])
+#         perMinute = [True, count]
+#         del words[-3:]
+#         # print(count)
+#     else:
+#         perMinute = [False, 60]
+#
+#     length = len(words)
+#
+#     package = list()
+#     packageComponent = []
+#     count = 1
+#     phrase = ""
+#
+#     while length > 0:
+#         length -= 1
+#         val = words.pop()
+#
+#         # print(val)
+#
+#         if IsSpecific(val):
+#             # print("Specific val ", val)
+#             if phrase[-1] == ' ':
+#                 phrase = phrase[:-1]
+#             packageComponent = [phrase, count]
+#             count = 1
+#             phrase = ""
+#             package.append(packageComponent)
+#             packageComponent = list()
+#             if val == "from":
+#                 components.append(package)
+#                 package = list()
+#             if val == "requires":
+#                 requirements.append(package)
+#                 package = list()
+#             if val == "recipe:":
+#                 products.append(package)
+#                 package = list()
+#         else:
+#             if val.isnumeric():
+#                 count = int(val)
+#             else:
+#                 phrase = val + " " + phrase
+#
+#     if len(products) != 0:
+#         name = phrase[:-1]
+#     else:
+#         products.append(package)
+#
+#     products = products[0]
+#     components = components[0]
+#
+#     if len(requirements) != 0:
+#         requirements = requirements[0]
+#
+#     return name, products, components, requirements, perMinute
 
-    for val in array:
-        if val == element:
-            return i
-        i += 1
+import FactorioChains as fc
 
-    return -1
+class CraftData:
+    _recipes = []
+    _factories = []
+    _rawSources = []
+    _components = []
 
+    def __init__(self, files = []):
+        if files == []:
+            pass
 
-def DivideEnumeration(words):
-    res = list()
-    # print("In divide ", words)
+    def RecipesCount(self):
+        return len(self._recipes)
 
-    while "and" in words:
-        block = words[:FirstIndexOf(words, "and")]
-        del words[:len(block) + 1]
-        if block[0].isnumeric():
-            compCount = int(block[0])
-            del block[0]
-        else:
-            compCount = 1
+    def FactoriesCount(self):
+        return len(self._factories)
 
-        block = " ".join(block)
+    def RawSourcesCount(self):
+        return len(self._rawSources)
 
-        res.append([block, compCount])
+    def ComponentsCount(self):
+        return len(self._components)
 
-    if words[0].isnumeric():
-        compCount = int(words[0])
-        del words[0]
-    else:
-        compCount = 1
+    def PrintRecipes(self):
+        for recipe in self._recipes:
+            recipe.Print()
 
-    words = " ".join(words[:])
+    def PrintFactories(self):
+        for factory in self._factories:
+            factory.Print()
 
-    res.append([words, compCount])
+    def PrintRawSources(self):
+        for source in self._rawSources:
+            source.Print()
 
-    return res
+    def PrintComponents(self):
+        for component in self._components:
+            component.Print()
 
-def DivideEnumerationCountless(words):
-    res = []
+    def AddRecipesFromFile(self, filename):
+        with open(filename) as reader:
+            while True:
+                line = reader.readline()
 
-    if len(words) == 0:
+                if (line == '') | (line == "stop\n"):
+                    print("break")
+                    break
+
+                if line[0] == '#':
+                    continue
+
+                line = line[:-1]
+
+                recipe = fc.Recipe()
+                recipe.ParseFromLine(line)
+
+                self._recipes.append(recipe)
+
+    def AddFactoriesFromFile(self, filename):
+        with open(filename) as reader:
+            while True:
+                line = reader.readline()
+
+                if (line == '') | (line == "stop\n"):
+                    print("break")
+                    break
+
+                if line[0] == '#':
+                    continue
+
+                line = line[:-1]
+
+                factory = fc.Factory()
+                factory.ParseFromLine(line)
+
+                self. _factories.append(factory)
+
+    def AddRawSourcesFromFile(self, filename):
+        with open(filename) as reader:
+            while True:
+                line = reader.readline()
+
+                if (line == '') | (line == "stop\n"):
+                    print("break")
+                    break
+
+                if line[0] == '#':
+                    continue
+
+                if not line[-1].isprintable():
+                    line = line[:-1]
+
+                source = fc.RawSource()
+                source.ParseFromLine(line)
+                self._rawSources.append(source)
+
+    def RenewComponentsList(self):
+        for recipe in self._recipes:
+            for component in recipe.components:
+                comp = fc.Component(component[0])
+
+                if not (comp in self._components):
+                    self._components.append(comp)
+
+            for product in recipe.products:
+                comp = fc.Component(product[0])
+
+                if not (comp in self._components):
+                    self._components.append(comp)
+
+    def GetAllRecipes(self):
+        return self._recipes
+
+    def GetAllRecipesNames(self):
+        res = list()
+
+        for recipe in self._recipes:
+            res.append(recipe.name)
+
         return res
 
-    while "and" in words:
-        block = words[:FirstIndexOf(words, "and")]
-        del words[:len(block) + 1]
+    def GetAllFactories(self):
+        return self._factories
 
-        block = " ".join(block[:])
-        res.append(block)
+    def GetAllRawSources(self):
+        return self._rawSources
 
-    words = " ".join(words[:])
-    res.append(words)
+    def GetAllComponentsNames(self):
+        res = list()
 
-    return res
+        for component in self._components:
+            res.append(component.name)
 
-def ParseRecipe(string):
-    words = string.split()
+        return res
 
-    if "per minute" in string:
-        # print("Per minute detected")
-        perMinuteCount = int(words[-1])
-        del words[-1]
-        del words[-1]
-        del words[-1]
-        perMinute = [True, perMinuteCount]
-    else:
-        perMinute = [False, 60]
+    def FillFromFile(self, files):
+        self.AddRecipesFromFile(files["recipes"])
+        self.AddFactoriesFromFile(files["factories"])
+        self.AddRawSourcesFromFile(files["raw sources"])
+        self.RenewComponentsList()
 
-    if "recipe:" in words:
-        name = words[:FirstIndexOf(words, "recipe:")]
-        # if len(name) > 1:
-        # print(words)
-        del words[:len(name) + 1]
-        name = " ".join(name)
-    else:
-        name = "unnamed"
+    def GetRecipeByName(self, name):
+        recipe = list(filter(lambda x: name == x.name, self._recipes))
+        if len(recipe) != 0:
+            recipe = recipe[0]
 
-    lastProduct = FirstIndexOf(words, "from")
-    products = DivideEnumeration(words[:lastProduct])
-    del words[:lastProduct + 1]
-    if "requires" in words:
-        lastComponent = FirstIndexOf(words, "requires")
-    else:
-        lastComponent = len(words)
+        return recipe
 
-    components = words[:lastComponent].copy()
-    del words[:len(components)]
+    def GetRecipesByProduct(self, product):
+        recipes = list()
 
-    components = DivideEnumeration(components)
+        for recipe in self._recipes:
+            for prod in recipe.products:
+                if product == prod[0]:
+                    recipes.append(recipe)
+                    break
 
-    if len(words) != 0:
-        del words[0]
+        if recipes == []:
+            return recipes
 
-    requirements = DivideEnumerationCountless(words)
+        return recipes
 
-    return name, products, components, requirements, perMinute
+    def __selectProperRecipe(self, recipe):
+        return recipe[0]
 
+    def __isRaw(self, component):
+        source = fc.RawSource(component.name)
 
-def PrintRecipe(recipe):
-    print(recipe)
+        return source in self._rawSources
 
+    def __CalculateSubrecipe(self, item, count):
 
-def IsSpecific(word):
-    specific = "and", "from", "recipe:", "requires"
-    return word in specific
+        if self.__isRaw(fc.Component(item)):
+            return
+        # if item in self._rawSources:
+        #     return
 
+        recipe = self.GetRecipesByProduct(item)
 
-def ParseRecipes(line):
-    words = line.split()
-    stack = []
-    length = len(words)
-    perMinute = []
-    name = "recipe"
-    components = list()
-    products = list()
-    requirements = list()
+        print("Item: ", item, " recipe: ", recipe)
 
-    val = words[-3:]
-    # print(val)
+        if recipe == []:
+            print("Recipe not found")
+            return
 
-    perMinute = False
+        recipe = self.__selectProperRecipe(recipe)
+        prodIndex = recipe.GetProductIndex(item)
 
-    if ("per" in val) and ("minute" in val):
-        try:
-            count = float(val[0])
-        except Exception:
-            try:
-                count = float(val[2])
-            except Exception:
-                count = 60
-        # count = int([x for x in val if x.isnumeric()][0])
-        perMinute = [True, count]
-        del words[-3:]
-        # print(count)
-    else:
-        perMinute = [False, 60]
+        recipe.Print()
 
-    length = len(words)
+        requiredEfficiency = count / (recipe.perMinuteOperations * recipe.products[prodIndex][1])
 
-    package = list()
-    packageComponent = []
-    count = 1
-    phrase = ""
+        print("Efficiency: ", requiredEfficiency)
 
-    while length > 0:
-        length -= 1
-        val = words.pop()
+        print(recipe.products[prodIndex][0])
 
-        # print(val)
-
-        if IsSpecific(val):
-            # print("Specific val ", val)
-            if phrase[-1] == ' ':
-                phrase = phrase[:-1]
-            packageComponent = [phrase, count]
-            count = 1
-            phrase = ""
-            package.append(packageComponent)
-            packageComponent = list()
-            if val == "from":
-                components.append(package)
-                package = list()
-            if val == "requires":
-                requirements.append(package)
-                package = list()
-            if val == "recipe:":
-                products.append(package)
-                package = list()
+        if recipe.products[prodIndex][0] in self.productionSummary:
+            print("Old one: ", recipe.products[prodIndex][0])
+            # temp = self.productionSummary[recipe.products[prodIndex][0]]
+            # self.productionSummary[recipe.products[prodIndex][0]] = [temp[0] + count, temp[1] + requiredEfficiency, recipe.requirements]
+            self.productionSummary[recipe.products[prodIndex][0]].Append(requiredEfficiency)
         else:
-            if val.isnumeric():
-                count = int(val)
-            else:
-                phrase = val + " " + phrase
+            print("New one: ", recipe.products[prodIndex][0])
+            self.productionSummary[recipe.products[prodIndex][0]] = fc.CraftRequirement(recipe.products[prodIndex], count, recipe.components, requiredEfficiency, recipe.requirements)
+            print("Added one: ", self.productionSummary[recipe.products[prodIndex][0]])
+            # self.productionSummary[recipe.products[prodIndex][0]] = [count, requiredEfficiency, recipe.requirements, recipe.components, recipe.products]
 
-    if len(products) != 0:
-        name = phrase[:-1]
-    else:
-        products.append(package)
+        for component in recipe.components:
+            if not (fc.Component(component[0]) in self._rawSources):
+                self.__CalculateSubrecipe(component[0], component[1] * requiredEfficiency)
 
-    products = products[0]
-    components = components[0]
+    def __getProperFactories(self, request):
+        print("Searching factory for ", request)
 
-    if len(requirements) != 0:
-        requirements = requirements[0]
+        matchingfactories = self._factories.copy()
+        print("Matching factories: ", matchingfactories)
 
-    return name, products, components, requirements, perMinute
+        for requirement in request.requirements:
+            print("Req: ", requirement)
+            matchingfactories[0].Print()
+            matchingfactories = list(filter(lambda x: requirement in x.allowances, matchingfactories))
+            print("Tmatch: ", matchingfactories)
+
+        print("Matching factories: ", matchingfactories)
+
+        request.GiveFactories(matchingfactories)
+        request.FindFactoryCount()
+
+        # print("match: ", matchingfactories)
+
+        return matchingfactories
+
+    def __refactorProductionSummary(self):
+        for propkey in self.productionSummary.keys():
+            prop = self.productionSummary[propkey]
+            print("Prop: ", prop)
+            self.__getProperFactories(prop)
+
+            prop.Print()
+
+
+    def CalculateMultipleRequest(self, data):
+        self.productionSummary = {}
+
+        print("Data: ", data)
+
+        for pair in data:
+            # print("pair:", pair)
+            # recipe = self.GetRecipeByName(pair[0])
+            # print(recipe)
+            # requiredEfficiency = pair[1] / recipe.frequency
+            self.__CalculateSubrecipe(pair[0], pair[1])
+
+        # print("Total collected data length: ", len(self.productionSummary))
+
+        self.__refactorProductionSummary()
+
+        # for propkey in self.productionSummary.keys():
+        #     prop = self.productionSummary[propkey]
+        #     factories = self.__getProperFactories(prop)
+        #
+        #     if (factories == []):
+        #         print("Error: no factory found")
+        #         continue
+        #
+        #     efficiency = -1
+        #     selectedFactory = []
+        #
+        #     for factory in factories:
+        #         if factory[2] > efficiency:
+        #             efficiency = factory[2]
+        #             selectedFactory = factory
+        #
+        #     # print(selectedFactory)
+        #
+        #     factoriesCount = math.ceil(prop[1] / selectedFactory[2])
+        #     self.productionSummary[propkey] = [selectedFactory[0], factoriesCount]
+        #
+        #     # key = self.productionSummary.
+        #
+        #     # print(factory[0], ": ", factoriesCount, ": ", data[0])
+        #
+        # print(self.productionSummary)
+
+        return self.productionSummary
 
 
 class Base:
@@ -198,6 +485,9 @@ class Base:
     _factories = []
 
     def __init__(self):
+        pass
+
+    def FillBase(self, files):
         pass
 
     def FactoriesCount(self):

@@ -1,13 +1,13 @@
-processing unit recipe: 1 processing unit from 2 advanced circuit and 20 electronic circuit and 5 sulfuric acid 6 per minute
-advanced circuit recipe: 1 advanced circuit from 4 copper wires and 2 electronic circuit and 2 plastic bar 10 per minute
-copper wire recipe: 2 copper wire from 1 copper plate 120 per minute
-plastic bar recipe: 2 plastic bar from 1 coal and 20 petroleum gas requires crafting and liquids 60 per minute
-advanced oil processing recipe: 55 petroleum gas and 25 heavy oil and 45 light oil from 100 crude oil and 50 water requires oil processing 12 per minute
-electronic circuit recipe: 1 electronic circuit from 3 copper wire and 1 iron plate 120 per minute
-iron plate recipe: 1 iron plate from 1 iron ore requires smelting 18.75 per minute
-sulfuric acid recipe: 50 sulfuric acid from i iron plate and 5 sulfur and 100 water 60 per minute
-sulfur recipe: 2 sulfur from 30 petroleum gas and 30 water 60 per minute
-copper plate recipe: 1 copper plate from 1 copper ore requires smelting 18.75 per minute
+Processing unit recipe: 1 processing unit from 2 advanced circuit and 20 electronic circuit and 5 sulfuric acid 6 per minute
+Advanced circuit recipe: 1 advanced circuit from 4 copper wire and 2 electronic circuit and 2 plastic bar 10 per minute
+Copper wire recipe: 2 copper wire from 1 copper plate 120 per minute
+Plastic bar recipe: 2 plastic bar from 1 coal and 20 petroleum gas requires crafting and liquids 60 per minute
+Advanced oil processing recipe: 55 petroleum gas and 25 heavy oil and 45 light oil from 100 crude oil and 50 water requires oil processing 12 per minute
+Electronic circuit recipe: 1 electronic circuit from 3 copper wire and 1 iron plate 120 per minute
+Iron plate recipe: 1 iron plate from 1 iron ore requires smelting 18.75 per minute
+Sulfuric acid recipe: 50 sulfuric acid from iron plate and 5 sulfur and 100 water 60 per minute
+Sulfur recipe: 2 sulfur from 30 petroleum gas and 30 water 60 per minute
+Copper plate recipe: 1 copper plate from 1 copper ore requires smelting 18.75 per minute
 stop
 
 microcircuit recipe: microcircuit from 2 iron plate and 5 copper wire 30 per minute

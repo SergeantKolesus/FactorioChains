@@ -4,3 +4,4 @@ copper ore
 crude oil
 stone
 water
+coal
